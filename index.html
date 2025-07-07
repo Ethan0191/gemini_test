@@ -155,6 +155,7 @@
         // --- SHAPE DEFINITIONS ---
         let currentShapeIndex = 0;
         const shapes = [
+            { name: "Love siyu Forever", generate: generateLoveText },
             { name: "Sphere", generate: generateSphere },
             { name: "Cube", generate: generateCube },
             { name: "Torus", generate: generateTorus },
@@ -164,6 +165,58 @@
         ];
 
         // --- SHAPE GENERATION FUNCTIONS ---
+        function generateLoveText() {
+            const targetPositions = new Float32Array(PARTICLE_COUNT * 3);
+            const text = "Love siyu Forever";
+            const fontSize = 2;
+            const letterSpacing = 1.5;
+            const lineHeight = 3;
+            
+            // Create a canvas to get text metrics
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.font = `${fontSize * 50}px Arial`;
+            
+            let particleIndex = 0;
+            let xOffset = -ctx.measureText(text).width / 200; // Center the text
+            
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const charWidth = ctx.measureText(char).width / 50;
+                
+                // Generate particles for each character
+                const charParticles = Math.floor(PARTICLE_COUNT / text.length);
+                for (let j = 0; j < charParticles && particleIndex < PARTICLE_COUNT; j++) {
+                    const x = xOffset + (Math.random() - 0.5) * charWidth;
+                    const y = (Math.random() - 0.5) * fontSize;
+                    const z = (Math.random() - 0.5) * 0.5;
+                    
+                    targetPositions[particleIndex * 3] = x;
+                    targetPositions[particleIndex * 3 + 1] = y;
+                    targetPositions[particleIndex * 3 + 2] = z;
+                    
+                    particleIndex++;
+                }
+                
+                xOffset += charWidth + letterSpacing / 10;
+            }
+            
+            // Fill remaining particles randomly around the text
+            while (particleIndex < PARTICLE_COUNT) {
+                const x = (Math.random() - 0.5) * 20;
+                const y = (Math.random() - 0.5) * 10;
+                const z = (Math.random() - 0.5) * 5;
+                
+                targetPositions[particleIndex * 3] = x;
+                targetPositions[particleIndex * 3 + 1] = y;
+                targetPositions[particleIndex * 3 + 2] = z;
+                
+                particleIndex++;
+            }
+            
+            return targetPositions;
+        }
+
         function generateSphere() {
             const radius = 6;
             const targetPositions = new Float32Array(PARTICLE_COUNT * 3);
